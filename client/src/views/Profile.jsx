@@ -62,7 +62,7 @@ const Profile = () => {
                       User name:
                     </p>
                     <p className="text-start text-sm sm:text-md md:text-lg lg:text-xl">
-                      Kim Ji Won
+                      Kim Jiwon
                     </p>
                   </div>
 

@@ -59,7 +59,7 @@ const LoginCard = () => {
           </button>
           <div className="mt-4 text-center">
             <span className="text-sm text-white">
-              New Here?
+              New Here?{" "}
               <Link
                 to="/register"
                 className="text-blue-400 hover:text-blue-500 duration-300"

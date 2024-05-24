@@ -7,10 +7,11 @@ const RegisterCard = () => {
   return (
     <>
       <div className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative">
-        <h1 className="text-5xl text-white font-bold text-center mb-6">
+        <h1 className="text-5xl text-white font-bold text-center mb-6 font-irishGrover">
+          <span className="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-sky-400 opacity-75 ml-[-1.3rem]"></span>
           Register
         </h1>
-        <form>
+        <form className="font-inder">
           <div className="relative my-4">
             <input
               type="text"
@@ -81,7 +82,7 @@ const RegisterCard = () => {
             <span className="text-white text-sm">
               Already have an account?{" "}
               <Link
-                to={"/"}
+                to={"/login"}
                 className="text-blue-400 duration-300 hover:text-blue-500"
               >
                 Login Here

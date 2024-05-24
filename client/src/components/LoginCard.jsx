@@ -1,19 +1,52 @@
-import { Link } from "react-router-dom";
-import { BiUser } from "react-icons/bi";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineUnlock } from "react-icons/ai";
 import { MdEmail } from "react-icons/md";
+import Axios from "../axios";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const LoginCard = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSumbit = async (e) => {
+    e.preventDefault();
+    try {
+      const payload = {
+        email: email,
+        password: password,
+      };
+
+      const { data } = await Axios.post("/api/auth/login", payload);
+
+      if (data.message) {
+        toast.error(data.message);
+      } else {
+        const loadingToastId = toast.loading("Loading...");
+
+        setTimeout(() => {
+          toast.dismiss(loadingToastId);
+          navigate("/");
+        }, 1000);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <div className="bg-slate-800 border border-slate-400 rounded-md p-8 shadow-lg backdrop-filter backdrop-blur-sm bg-opacity-30 relative">
-        <h1 className="text-5xl text-white font-bold text-center mb-6">
+        <h1 className="text-5xl text-white font-bold text-center mb-6 font-irishGrover">
+          <span className="animate-ping absolute inline-flex h-4 w-4 rounded-full bg-sky-400 opacity-75 ml-[-1.3rem]"></span>
           Login
         </h1>
-        <form>
+        <form onSubmit={handleSumbit} className="font-inder">
           <div className="relative my-4">
             <input
               type="email"
+              onChange={(e) => setEmail(e.target.value)}
               className="block w-72 py-2.5 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=""
             />
@@ -29,6 +62,7 @@ const LoginCard = () => {
           <div className="relative my-4">
             <input
               type="password"
+              onChange={(e) => setPassword(e.target.value)}
               className="block w-72 py-2.5 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=""
             />

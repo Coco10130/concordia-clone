@@ -13,12 +13,8 @@ export function UserContextProvider({ children }) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (!user && token) {
-          const response = await axios.get("/api/auth", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+        if (!user) {
+          const response = await axios.get("/api/auth");
           const data = response.data;
           if (data && data.user) {
             setUser(data.user);
@@ -35,7 +31,7 @@ export function UserContextProvider({ children }) {
     };
 
     fetchUserData();
-  }, [user]);
+  }, [user, token]);
 
   // fetch user data after logging in
   const login = (userData) => {

@@ -39,7 +39,7 @@ const CategoryProduct = () => {
             />
           </figure>
           <div className="card-body font-inder w-full">
-            <div className="mx-auto w-auto border-2 border-slate-50">
+            <div className="mx-auto w-auto">
               <h2 className="card-title text-lg truncate">
                 {product.productName.length > 20
                   ? product.productName.substring(0, 20) + "..."
@@ -52,7 +52,7 @@ const CategoryProduct = () => {
             </div>
             <div className="card-actions mx-auto">
               <button className="btn bg-blue-500 border-none text-white hover:bg-white hover:text-blue-500 mt-4">
-                Buy Now
+                Add to Cart
               </button>
             </div>
           </div>

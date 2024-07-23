@@ -13,21 +13,23 @@ const NavBar = () => {
     const fetchProfile = async () => {
       try {
         if (!loading && user && token) {
-          const response = await axios.get("/api/profile", {
+          const { data } = await axios.get("/api/profile", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           });
 
-          setProfile(response.data);
+          if (data.success) {
+            setProfile(data.user);
+          }
         }
       } catch (error) {
         console.error(error.message);
       }
-
-      fetchProfile();
     };
-  }, [user, loading, token, profile]);
+
+    fetchProfile();
+  }, [user, loading, profile]);
 
   const handleLogout = () => {
     logout();
@@ -46,22 +48,7 @@ const NavBar = () => {
           </Link>
         </div>
 
-        {profile ? (
-          <div className="flex flex-row gap-6 mr-10">
-            <button
-              onClick={() => navigate("/login")}
-              className="bg-blue-500 text-white font-inder w-20 py-2 rounded-2xl"
-            >
-              Sign in
-            </button>
-            <button
-              onClick={() => navigate("/register")}
-              className="bg-blue-500 text-white font-inder w-20 py-2 rounded-2xl"
-            >
-              Sign up
-            </button>
-          </div>
-        ) : (
+        {!loading && token && user ? (
           <div className="flex-none">
             <div className="dropdown dropdown-end">
               <div
@@ -84,7 +71,9 @@ const NavBar = () => {
                       d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                     />
                   </svg>
-                  <span className="badge badge-sm indicator-item">8</span>
+                  <span className="badge badge-sm indicator-item">
+                    {profile.cartItems}
+                  </span>
                 </div>
               </div>
 
@@ -93,12 +82,13 @@ const NavBar = () => {
                 className="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow"
               >
                 <div className="card-body">
-                  <span className="font-bold text-black text-lg">8 Items</span>
-                  <span className="text-info">Subtotal: 8.99</span>
+                  <span className="font-bold text-black text-lg">
+                    {profile.cartItems} Items
+                  </span>
                   <div className="card-actions">
-                    <a href="/cart" className="btn btn-primary btn-block">
+                    <Link to="/cart" className="btn btn-primary btn-block">
                       View Cart
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -129,6 +119,21 @@ const NavBar = () => {
                 </li>
               </ul>
             </div>
+          </div>
+        ) : (
+          <div className="flex flex-row gap-6 mr-10">
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-blue-500 text-white font-inder w-20 py-2 rounded-2xl"
+            >
+              Sign in
+            </button>
+            <button
+              onClick={() => navigate("/register")}
+              className="bg-blue-500 text-white font-inder w-20 py-2 rounded-2xl"
+            >
+              Sign up
+            </button>
           </div>
         )}
       </div>

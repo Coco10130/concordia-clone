@@ -2,13 +2,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineUnlock } from "react-icons/ai";
 import { MdEmail } from "react-icons/md";
 import Axios from "../axios";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { toast } from "react-hot-toast";
+import { UserContext } from "../../context/UserContext";
 
 const LoginCard = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { updateUserProfile } = useContext(UserContext);
 
   const handleSumbit = async (e) => {
     e.preventDefault();
@@ -24,11 +26,15 @@ const LoginCard = () => {
         toast.error(data.message);
       } else {
         const loadingToastId = toast.loading("Loading...");
+        console.log(data.token);
 
-        setTimeout(() => {
-          toast.dismiss(loadingToastId);
-          navigate("/");
-        }, 1000);
+        if (data.token) {
+          setTimeout(() => {
+            updateUserProfile(data.user);
+            toast.dismiss(loadingToastId);
+            navigate("/");
+          }, 2000);
+        }
       }
     } catch (error) {
       console.error(error);

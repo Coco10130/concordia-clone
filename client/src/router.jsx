@@ -9,6 +9,8 @@ import ProfileCard from "./components/ProfileCard";
 import ProductCard from "./categories/ProductCard";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import CategoryProduct from "./categories/CategoryProduct";
+import RegisterShop from "./components/RegisterShop";
+import PurchaseCard from "./components/PurchaseCard";
 
 const router = createBrowserRouter([
   {
@@ -49,9 +51,20 @@ const router = createBrowserRouter([
             path: "",
             element: <ProfileCard />,
           },
+
           {
             path: "/profile/shop",
             element: <ShopCard />,
+          },
+
+          {
+            path: "/profile/purchase",
+            element: <PurchaseCard />,
+          },
+
+          {
+            path: "/profile/shop/register",
+            element: <RegisterShop />,
           },
         ],
       },

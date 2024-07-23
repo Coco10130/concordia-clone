@@ -1,13 +1,100 @@
 import Img from "/images/anya-pfp.jpg";
 import { MdEdit } from "react-icons/md";
 import { FaSave } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
+import { UserContext } from "../../context/UserContext";
+import axios from "../axios";
+import toast from "react-hot-toast";
 
 const ProfileCard = () => {
   const [isEditable, setIsEditable] = useState(false);
+  const { user, loading, token, updateUserProfile } = useContext(UserContext);
+  const [profile, setProfile] = useState([]);
+  const [name, setName] = useState();
+  const [contact, setContact] = useState();
+  const [birthdate, setBirthdate] = useState();
+  const imageRef = useRef();
 
-  const hanldeSubmit = (e) => {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        if (!loading && user && token) {
+          const { data } = await axios.get("/api/profile", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (data.success) {
+            setProfile(data.user);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchProfile();
+  }, [user, loading, token]);
+
+  const hanldeSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isEditable) {
+      try {
+        const payload = {
+          name: name,
+          contact: contact,
+          birthdate: birthdate,
+        };
+
+        const { data } = await axios.put(
+          `/api/profile/${profile._id}`,
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (data.success) {
+          updateUserProfile(data.user);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    e.preventDefault();
+
+    try {
+      const image = imageRef.current.files[0];
+
+      const formData = new FormData();
+
+      formData.append("image", image);
+
+      const { data } = await axios.put(
+        `/api/profile/updateImage/${profile._id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success(data.success);
+        updateUserProfile(data.user);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <>
@@ -19,12 +106,19 @@ const ProfileCard = () => {
           <div className="flex justify-center align-center items-center md:w-[80%]">
             <label htmlFor="file_picker" className="rounded-full">
               <img
-                src={Img}
+                src={profile.image ? `/images/${profile.image}` : Img}
                 alt="Image"
                 className="h-28 w-28 md:h-40 md:w-40 rounded-full opacity-65"
               />
 
-              <input type="file" id="file_picker" name="file_picker" hidden />
+              <input
+                type="file"
+                ref={imageRef}
+                id="file_picker"
+                name="file_picker"
+                onChange={handleImageChange}
+                hidden
+              />
             </label>
           </div>
 
@@ -39,23 +133,19 @@ const ProfileCard = () => {
                 <input
                   type="text"
                   className="text-black border-none rounded-xl p-1 sm:p-2 md:p-3"
+                  defaultValue={profile.name}
+                  placeholder={profile.name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               ) : (
-                <p className="text-start p-1 sm:p-2 md:p-3">Kim Jiwon</p>
+                <p className="text-start p-1 sm:p-2 md:p-3">{profile.name}</p>
               )}
             </div>
 
             <div className="grid grid-cols-2 py-1 md:py-4">
               <p className="text-center p-1 sm:p-2 md:p-3">Email:</p>
 
-              {isEditable ? (
-                <input
-                  type="text"
-                  className="text-black border-none rounded-xl p-1 sm:p-2 md:p-3"
-                />
-              ) : (
-                <p className="text-start p-1 sm:p-2 md:p-3">jiwon@gmail.com</p>
-              )}
+              <p className="text-start p-1 sm:p-2 md:p-3">{profile.email}</p>
             </div>
 
             <div className="grid grid-cols-2 py-1 md:py-4">
@@ -65,9 +155,13 @@ const ProfileCard = () => {
                 <input
                   type="text"
                   className="text-black border-none rounded-xl p-1 sm:p-2 md:p-3"
+                  value={profile.contact}
+                  onChange={(e) => setContact(e.target.value)}
                 />
               ) : (
-                <p className="text-start p-1 sm:p-2 md:p-3">09308823882</p>
+                <p className="text-start p-1 sm:p-2 md:p-3">
+                  {profile.contact ? profile.contact : ""}
+                </p>
               )}
             </div>
 
@@ -78,9 +172,15 @@ const ProfileCard = () => {
                 <input
                   type="date"
                   className="text-black border-none rounded-xl p-1 sm:p-2 md:p-3"
+                  max={new Date().toISOString().split("T")[0]}
+                  defaultValue={profile.birthdate}
+                  placeholder={profile.birthdate}
+                  onChange={(e) => setBirthdate(e.target.value)}
                 />
               ) : (
-                <p className="text-start p-1 sm:p-2 md:p-3">October 13, 2003</p>
+                <p className="text-start p-1 sm:p-2 md:p-3">
+                  {profile.birthdate ? profile.birthdate : ""}
+                </p>
               )}
             </div>
 

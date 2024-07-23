@@ -10,18 +10,19 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check if the user entered email
+    // Check if the user entered email address
     if (email === "") {
-      return res.status(200).json({ message: "Email is required." });
+      return res.status(200).json({ message: "Email is required" });
     }
 
-    const user = await User.findOne({ email: email });
+    // check if use exists
+    const user = await User.findOne({ email });
 
-    // Check if user exists
     if (!user) {
-      return res.status(200).json({ message: "User does not exist." });
+      return res.status(200).json({ message: "User not found" });
     }
 
+    // Check if password match
     const match = await comparePassword(password, user.password);
 
     if (match) {
@@ -36,6 +37,7 @@ const login = async (req, res) => {
         { expiresIn: "7d" },
         (err, token) => {
           if (err) throw err;
+
           res
             .cookie("token", token, { httpOnly: true })
             .status(200)
@@ -43,10 +45,10 @@ const login = async (req, res) => {
         }
       );
     } else {
-      res.status(200).json({ message: "Password not match" });
+      return res.status(201).json({ message: "Password not match" });
     }
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -93,27 +95,21 @@ const register = async (req, res) => {
     };
 
     await User.create(userData);
-    res.status(201).json({ message: "User created successfully." });
+    res.status(201).json({ success: "User created successfully." });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 const getProfile = async (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
+  const { token } = req.cookies;
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select("-password"); // Avoid returning the password
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
+      const user = jwt.verify(token, process.env.JWT_SECRET);
       res.status(200).json({ user, token });
     } catch (err) {
       res.status(401).json({ message: "Invalid authorization token" });
     }
-  } else {
-    res.status(401).json({ message: "Not authorized" });
   }
 };
 

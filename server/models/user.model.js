@@ -22,6 +22,12 @@ const UserSchema = mongoose.Schema(
       default: "user",
     },
 
+    cartItems: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
     image: {
       type: String,
       required: false,
@@ -41,6 +47,21 @@ const UserSchema = mongoose.Schema(
       type: Boolean,
       required: false,
       default: false,
+    },
+
+    shopName: {
+      type: String,
+      required: false,
+    },
+
+    shopContact: {
+      type: String,
+      required: false,
+    },
+
+    shopEmail: {
+      type: String,
+      required: false,
     },
   },
   {

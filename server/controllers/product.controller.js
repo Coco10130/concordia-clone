@@ -1,4 +1,5 @@
 const Product = require("../models/product.model");
+const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 
 const addProduct = async (req, res) => {
@@ -9,7 +10,8 @@ const addProduct = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const user = jwt.verify(token, process.env.JWT_SECRET);
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decode.id);
 
     const { productName, price, quantity, category } = req.body;
 
@@ -40,6 +42,7 @@ const addProduct = async (req, res) => {
       image: imageFile,
       createdBy: user.id,
       category: category,
+      productBy: user.shopName,
     };
 
     await Product.create(formattedData);

@@ -22,9 +22,20 @@ const CartSchema = mongoose.Schema(
       required: true,
     },
 
+    subTotal: {
+      type: Number,
+      required: true,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
       required: true,
     },
   },

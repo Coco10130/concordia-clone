@@ -1,10 +1,13 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "../axios";
 import { UserContext } from "../../context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const ProductCard = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const { user, token, loading } = useContext(UserContext);
+  const { user, token, loading, updateUserProfile } = useContext(UserContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -19,6 +22,38 @@ const ProductCard = () => {
 
     fetchProduct();
   }, [user, loading]);
+
+  const handleAddToCart = async (e, productId) => {
+    e.preventDefault();
+    try {
+      if (user && token) {
+        const quantity = 1;
+
+        const payload = {
+          quantity: quantity,
+        };
+
+        const { data } = await axios.post(`/api/cart/${productId}`, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (data.success) {
+          if (data.user) {
+            updateUserProfile(data.user);
+          }
+          toast.success(data.success);
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -35,7 +70,7 @@ const ProductCard = () => {
             />
           </figure>
           <div className="card-body font-inder w-full">
-            <div className="mx-auto w-auto border-2 border-slate-50">
+            <div className="mx-auto w-auto">
               <h2 className="card-title text-lg truncate">
                 {product.productName.length > 20
                   ? product.productName.substring(0, 20) + "..."
@@ -47,8 +82,11 @@ const ProductCard = () => {
               <p>Quantity: {product.price}</p>
             </div>
             <div className="card-actions mx-auto">
-              <button className="btn bg-blue-500 border-none text-white hover:bg-white hover:text-blue-500 mt-4">
-                Buy Now
+              <button
+                onClick={(e) => handleAddToCart(e, product._id)}
+                className="btn bg-blue-500 border-none text-white hover:bg-white hover:text-blue-500 mt-4"
+              >
+                Add to Cart
               </button>
             </div>
           </div>

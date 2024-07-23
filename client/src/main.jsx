@@ -9,7 +9,7 @@ import router from "./router.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <UserContextProvider>
-      <Toaster position="top-right" />
+      <Toaster />
       <RouterProvider router={router} />
     </UserContextProvider>
   </React.StrictMode>

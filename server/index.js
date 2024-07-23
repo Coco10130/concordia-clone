@@ -8,6 +8,7 @@ require("dotenv").config();
 const authRouter = require("./routes/auth.route");
 const profileRouter = require("./routes/profile.route");
 const productRouter = require("./routes/product.route.js");
+const cartRouter = require("./routes/cart.route.js");
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/product", productRouter);
+app.use("/api/cart", cartRouter);
 
 mongoose
   .connect(process.env.MONGO)

@@ -7,8 +7,7 @@ import { useNavigate, Outlet } from "react-router-dom";
 const Profile = () => {
   const navigate = useNavigate();
   const navigations = ["profile", "purchase", "shop"];
-  const [isEditable, setIsEditable] = useState(false);
-  const { user, loading, token } = useContext(UserContext);
+  const { loading, token } = useContext(UserContext);
 
   if (!loading && !token) {
     return navigate("/login");

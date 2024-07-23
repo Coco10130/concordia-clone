@@ -32,6 +32,11 @@ const ProductSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+
+    productBy: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
